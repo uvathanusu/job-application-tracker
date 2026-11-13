@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Jobtrail - Job Application Tracker</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1f5f4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jobtrail">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6f5;
+    --surface: #ffffff;
+    --ink: #16262e;
+    --muted: #5d6e75;
+    --line: #dce3e0;
+    --accent: #1f5f4a;
+    --accent-dark: #164838;
+    --accent-light: #eaf3ef;
+    --danger: #c53030;
+    --danger-bg: #fff5f5;
+    --applied: #3b5b8c;
+    --test: #b7791f;
+    --interview: #6b4fa0;
+    --offer: #2f7d4f;
+    --rejected: #a8453f;
+    --radius: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4 {
+    font-family: "Bricolage Grotesque", "DM Sans", sans-serif;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid #7fb8a4; outline-offset: 2px; }
+  .hidden { display: none !important; }
+
+  /* Buttons & Inputs */
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    touch-action: manipulation;
+  }
+  .btn:hover { background: var(--accent-dark); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: #eef2f0; }
+  .btn.danger { background: #fff; color: var(--danger); border: 1px solid #fed7d7; }
+  .btn.danger:hover { background: var(--danger-bg); }
+  .btn.sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+  .btn.full { width: 100%; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #32434a; }
+  .field { margin-bottom: 14px; }
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color .15s ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(31, 95, 74, 0.15);
+  }
+  textarea { resize: vertical; min-height: 72px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Auth Screen */
+  .auth { min-height: 100vh; display: grid; grid-template-columns: 1.15fr 1fr; }
+  .brand {
+    background: linear-gradient(145deg, #164838 0%, #1f5f4a 100%);
+    color: #eaf3ef;
+    padding: 56px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .brand h1 { font-size: 44px; line-height: 1.12; margin-bottom: 16px; color: #fff; }
+  .brand p { max-width: 38ch; color: #bcd5cb; margin: 0 0 44px; font-size: 17px; }
+  .path { list-style: none; margin: 0; padding: 0; position: relative; }
+  .path::before { content: ""; position: absolute; left: 8px; top: 10px; bottom: 10px; width: 2px; background: #3d7a65; }
+  .path li { position: relative; padding: 0 0 20px 34px; font-weight: 500; font-size: 16px; }
+  .path li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #164838;
+    border: 2px solid #8fc7b1;
+  }
+  .path li:last-child { padding-bottom: 0; }
+  .path li:last-child::before { background: #8fc7b1; }
+  .auth-side { display: flex; align-items: center; justify-content: center; padding: 32px 24px; background: #fff; position: relative; }
+  .auth-card { width: 100%; max-width: 400px; }
+  .auth-card h2 { font-size: 30px; margin-bottom: 6px; }
+  .auth-card .sub { color: var(--muted); margin: 0 0 24px; }
+  .tabs { display: flex; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .tab {
+    background: none;
+    border: 0;
+    padding: 10px 4px;
+    margin-right: 24px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s;
+  }
+  .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+  .error { color: var(--danger); font-size: 14px; min-height: 20px; margin: 0 0 12px; }
+
+  /* App Shell */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+  .topbar-in {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand-group { display: flex; align-items: center; gap: 10px; }
+  .logo {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .badge-tag {
+    font-size: 11px;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .user-nav { display: flex; align-items: center; gap: 10px; }
+  .user-greet { font-size: 14px; color: var(--muted); font-weight: 500; }
+  .user-greet strong { color: var(--ink); font-weight: 600; }
+
+  /* Mobile Install Banner */
+  .install-banner {
+    background: #e6f4ea;
+    border: 1px solid #cce8d6;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #137333;
+    font-weight: 500;
+  }
+  .install-banner .install-btn {
+    background: #137333;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 0;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 70px; }
+  .page-title { font-size: 28px; margin-bottom: 4px; }
+  .page-sub { color: var(--muted); margin: 0 0 20px; font-size: 15px; }
+
+  /* Pipeline Strip */
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stage {
+    background: none;
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-top: 4px solid var(--c);
+    padding: 14px 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s;
+    min-width: 90px;
+  }
+  .stage:last-child { border-right: 0; }
+  .stage:hover { background: #f6f8f7; }
+  .stage[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 12%, white); }
+  .stage .n { display: block; font-family: "Bricolage Grotesque", sans-serif; font-size: 28px; font-weight: 700; color: var(--c); line-height: 1.1; }
+  .stage .t { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .filter-note { font-size: 14px; color: var(--muted); min-height: 24px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .linkbtn { background: none; border: 0; color: var(--accent); font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+
+  /* Grid Layout */
+  .grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-sm); }
+  .panel h3 { font-size: 20px; margin-bottom: 16px; }
+  .side { position: sticky; top: 80px; }
+
+  /* Application List */
+  .search-wrap { position: relative; margin-bottom: 16px; }
+  .search { padding-left: 38px; }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 15px;
+    pointer-events: none;
+  }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .item {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .item:hover {
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5d1;
+  }
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .company { font-weight: 700; font-size: 18px; color: var(--ink); line-height: 1.2; }
+  .role { color: var(--muted); font-size: 14px; font-weight: 500; margin-top: 2px; }
+  .badge {
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 12%, white);
+    border: 1px solid color-mix(in srgb, var(--c) 30%, white);
+    white-space: nowrap;
+  }
+  .dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    background: #f8faf9;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+  .dates .soon { color: var(--interview); font-weight: 600; }
+  .notes {
+    font-size: 13px;
+    color: #2b3b42;
+    background: #fbfcfc;
+    border-left: 3px solid #b7c7c1;
+    padding: 8px 12px;
+    margin: 2px 0 0;
+    border-radius: 0 6px 6px 0;
+    white-space: pre-wrap;
+  }
+  .item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    margin-top: 2px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .quick-status-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .status-select-sm {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    width: auto;
+  }
+  .btn-group { display: flex; gap: 6px; }
+
+  .empty { text-align: center; padding: 44px 16px; color: var(--muted); }
+  .empty strong { display: block; color: var(--ink); font-size: 18px; margin-bottom: 6px; }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 32, 26, 0.55);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 100;
+  }
+  .modal {
+    background: #fff;
+    border-radius: var(--radius);
+    max-width: 480px;
+    width: 100%;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 200;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.bad { background: var(--danger); }
+
+  /* Responsive Mobile Design */
+  @media (max-width: 860px) {
+    .auth { grid-template-columns: 1fr; }
+    .brand { padding: 36px 20px; }
+    .brand h1 { font-size: 32px; }
+    .grid { grid-template-columns: 1fr; }
+    .side { position: static; order: -1; }
+    .strip { grid-template-columns: repeat(5, minmax(84px, 1fr)); }
+    .topbar-in { padding: 12px 16px; }
+    .user-greet { display: none; }
+    main { padding: 16px 14px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Install App Notice on Mobile Browser -->
+<div id="installBanner" class="install-banner hidden">
+  <span>📱 Get the Jobtrail Android App</span>
+  <div style="display:flex; gap:8px;">
+    <button class="install-btn" id="installBtn">Install</button>
+    <button class="btn ghost sm" onclick="$('installBanner').classList.add('hidden')">✕</button>
+  </div>
+</div>
+
+<!-- Sign In / Create Account Screen -->
+<div id="auth" class="auth">
+  <section class="brand">
+    <div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
+      <span class="logo" style="color: #fff; font-size: 26px;">
+        <img src="/icon.svg" width="32" height="32" alt="logo" style="border-radius:6px; vertical-align:middle; margin-right:4px;">
+        Jobtrail <span class="badge-tag" style="background: rgba(255,255,255,0.2); color: #fff;">Mobile</span>
+      </span>
+      <button class="btn ghost sm" style="color:#fff; border-color:rgba(255,255,255,0.3)" onclick="openServerModal()" title="Configure Backend Server">⚙️ Server</button>
+    </div>
+    <h1>Know where every job application stands.</h1>
+    <p>Organize your job search seamlessly on desktop or your Android phone.</p>
+    <ol class="path">
+      <li>Applied</li>
+      <li>Online Test / Screening</li>
+      <li>Interview</li>
+      <li>Offer</li>
+    </ol>
+  </section>
+  <section class="auth-side">
+    <div class="auth-card">
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="sub" id="authSub">Log in to view and track your applications.</p>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tabLogin" aria-selected="true" onclick="setMode('login')">Log in</button>
+        <button class="tab" role="tab" id="tabSignup" aria-selected="false" onclick="setMode('signup')">Create account</button>
+      </div>
+      <div class="field hidden" id="nameField">
+        <label for="name">Your Name</label>
+        <input id="name" placeholder="e.g. Uva Thanusu" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <p class="error" id="authError" role="alert"></p>
+      <button class="btn full" id="authBtn" onclick="submitAuth()">Log in</button>
+      <div style="text-align: center; margin-top: 14px;">
+        <button class="linkbtn" onclick="openServerModal()" style="font-size:12px; color:var(--muted)">Connected API: <span id="currentApiDisplay">loading...</span></button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Main Application Shell -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand-group">
+        <span class="logo">
+          <img src="/icon.svg" width="28" height="28" alt="logo" style="border-radius:6px;">
+          Jobtrail
+        </span>
+      </div>
+      <div class="user-nav">
+        <span class="user-greet">Signed in as <strong id="userName">User</strong></span>
+        <button class="btn ghost sm" onclick="openServerModal()" title="Server Settings">⚙️</button>
+        <button class="btn ghost sm" onclick="logout()">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h2 class="page-title">Applications</h2>
+    <p class="page-sub">Tap any stage below to filter.</p>
+
+    <!-- Pipeline Strip -->
+    <div class="strip" id="strip"></div>
+    <div class="filter-note" id="filterNote"></div>
+
+    <div class="grid">
+      <!-- Applications List Panel -->
+      <section class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+          <h3>Job Pipeline</h3>
+          <span id="appCountBadge" style="font-size:13px; color:var(--muted); font-weight:600;">0 total</span>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search" id="search" type="search" placeholder="Search company or role..." aria-label="Search applications" oninput="onSearch()">
+        </div>
+        <ul class="list" id="list"></ul>
+      </section>
+
+      <!-- Add Application Sidebar -->
+      <aside class="panel side">
+        <h3>Add Application</h3>
+        <div class="field">
+          <label for="company">Company</label>
+          <input id="company" placeholder="e.g. Google, Cisco, Zoho">
+        </div>
+        <div class="field">
+          <label for="role">Role / Position</label>
+          <select id="role" onchange="onRoleChange()">
+            <option value="">Select a role</option>
+            <optgroup label="Software & Engineering">
+              <option>Software Developer</option>
+              <option>Frontend Developer</option>
+              <option>Backend Developer</option>
+              <option>Full Stack Developer</option>
+              <option>Mobile App Developer</option>
+            </optgroup>
+            <optgroup label="Data & Artificial Intelligence">
+              <option>Data Analyst</option>
+              <option>Data Scientist</option>
+              <option>Machine Learning Engineer</option>
+            </optgroup>
+            <optgroup label="Cloud & DevOps">
+              <option>DevOps Engineer</option>
+              <option>Cloud Engineer</option>
+              <option>Cybersecurity Analyst</option>
+            </optgroup>
+            <optgroup label="Internships">
+              <option>Software Intern</option>
+              <option>Data Intern</option>
+            </optgroup>
+            <option value="Other">Other (Custom)</option>
+          </select>
+          <input id="customRole" class="hidden" placeholder="Type the role title" style="margin-top:8px">
+        </div>
+        <div class="field">
+          <label for="status">Current Stage</label>
+          <select id="status">
+            <option>Applied</option>
+            <option>Online Test</option>
+            <option>Interview</option>
+            <option>Offer</option>
+            <option>Rejected</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="date_applied">Date Applied</label>
+            <input id="date_applied" type="date">
+          </div>
+          <div class="field">
+            <label for="interview_date">Interview Date</label>
+            <input id="interview_date" type="date">
+          </div>
+        </div>
+        <div class="field">
+          <label for="notes">Notes</label>
+          <textarea id="notes" placeholder="Interview tips, notes, questions..."></textarea>
+        </div>
+        <button class="btn full" onclick="addApplication()">Save Application</button>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- Edit Application Modal -->
+<div id="editModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Edit Application</h3>
+      <button class="btn ghost sm" onclick="closeEditModal()">✕</button>
+    </div>
+    <input type="hidden" id="edit_id">
+    <div class="field">
+      <label for="edit_company">Company</label>
+      <input id="edit_company">
+    </div>
+    <div class="field">
+      <label for="edit_role">Role</label>
+      <input id="edit_role">
+    </div>
+    <div class="field">
+      <label for="edit_status">Stage</label>
+      <select id="edit_status">
+        <option>Applied</option>
+        <option>Online Test</option>
+        <option>Interview</option>
+        <option>Offer</option>
+        <option>Rejected</option>
+      </select>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="edit_date_applied">Date Applied</label>
+        <input id="edit_date_applied" type="date">
+      </div>
+      <div class="field">
+        <label for="edit_interview_date">Interview Date</label>
+        <input id="edit_interview_date" type="date">
+      </div>
+    </div>
+    <div class="field">
+      <label for="edit_notes">Notes</label>
+      <textarea id="edit_notes"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost sm" onclick="closeEditModal()">Cancel</button>
+      <button class="btn sm" onclick="saveEditedApplication()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Server Settings Modal (Essential for Android & Remote Connection) -->
+<div id="serverModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>⚙️ API Server Connection</h3>
+      <button class="btn ghost sm" onclick="closeServerModal()">✕</button>
+    </div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">
+      When opening on your Android phone, enter your PC's local Wi-Fi IP address so the mobile app can reach the backend.
+    </p>
+    <div class="field">
+      <label for="serverInput">Backend Server URL</label>
+      <input id="serverInput" placeholder="http://10.58.124.144:5000">
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost sm" onclick="resetServerUrl()">Reset to Default</button>
+      <button class="btn sm" onclick="saveServerUrl()">Save & Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Popup -->
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+// Mobile & Desktop API URL Resolution
+function getBaseApi() {
+  const custom = localStorage.getItem("customApiUrl");
+  if (custom) return custom.replace(/\/$/, "");
+  if (window.location.origin && window.location.origin.startsWith("http")) {
+    return window.location.origin;
+  }
+  // Default fallback for mobile webview / local emulator
+  return "http://10.58.124.144:5000";
+}
+
+let API = getBaseApi();
+
+const STAGES = [
+  { name: "Applied", color: "var(--applied)" },
+  { name: "Online Test", color: "var(--test)" },
+  { name: "Interview", color: "var(--interview)" },
+  { name: "Offer", color: "var(--offer)" },
+  { name: "Rejected", color: "var(--rejected)" }
+];
+
+let token = localStorage.getItem("token");
+let currentUser = JSON.parse(localStorage.getItem("user") || "null");
+let apps = [];
+let stageFilter = null;
+let query = "";
+let mode = "login";
+let toastTimer;
+let deferredInstallPrompt = null;
+
+const $ = id => document.getElementById(id);
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function stageColor(name) {
+  const s = STAGES.find(x => x.name === name);
+  return s ? s.color : "var(--muted)";
+}
+
+function formatDate(s) {
+  if (!s) return null;
+  try {
+    const d = new Date(s + "T00:00:00");
+    return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  } catch(e) {
+    return s;
+  }
+}
+
+function toast(text, bad) {
+  const t = $("toast");
+  t.textContent = text;
+  t.className = "toast" + (bad ? " bad" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.add("hidden"), 2800);
+}
+
+function updateApiDisplay() {
+  const disp = $("currentApiDisplay");
+  if (disp) disp.textContent = API.replace(/^https?:\/\//, "");
+}
+
+// Server Configuration Modal Handlers
+function openServerModal() {
+  $("serverInput").value = API;
+  $("serverModal").classList.remove("hidden");
+}
+function closeServerModal() {
+  $("serverModal").classList.add("hidden");
+}
+function saveServerUrl() {
+  let val = $("serverInput").value.trim();
+  if (val) {
+    if (!val.startsWith("http://") && !val.startsWith("https://")) {
+      val = "http://" + val;
+    }
+    localStorage.setItem("customApiUrl", val);
+    API = val.replace(/\/$/, "");
+  }
+  updateApiDisplay();
+  closeServerModal();
+  toast("Server URL updated!");
+  if (token) loadApplications();
+}
+function resetServerUrl() {
+  localStorage.removeItem("customApiUrl");
+  API = (window.location.origin && window.location.origin.startsWith("http"))
+    ? window.location.origin
+    : "http://10.58.124.144:5000";
+  $("serverInput").value = API;
+  updateApiDisplay();
+  closeServerModal();
+  toast("Server URL reset.");
+  if (token) loadApplications();
+}
+
+async function api(path, method = "GET", body) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = "Bearer " + token;
+  let res;
+  try {
+    res = await fetch(API + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  } catch (e) {
+    throw new Error(`Cannot reach server at ${API}. Make sure Python app.py is running!`);
+  }
+  let data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) {
+    const err = new Error(data.error || "An error occurred. Please try again.");
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+/* Authentication */
+function setMode(m) {
+  mode = m;
+  const signup = m === "signup";
+  $("tabLogin").setAttribute("aria-selected", String(!signup));
+  $("tabSignup").setAttribute("aria-selected", String(signup));
+  $("nameField").classList.toggle("hidden", !signup);
+  $("authTitle").textContent = signup ? "Create account" : "Welcome back";
+  $("authSub").textContent = signup ? "Track your job applications effortlessly." : "Log in to see your applications.";
+  $("authBtn").textContent = signup ? "Create account" : "Log in";
+  $("password").autocomplete = signup ? "new-password" : "current-password";
+  $("authError").textContent = "";
+}
+
+async function submitAuth() {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  $("authError").textContent = "";
+
+  if (!email || !password) {
+    $("authError").textContent = "Please fill in email and password.";
+    return;
+  }
+
+  try {
+    if (mode === "signup") {
+      const name = $("name").value.trim();
+      if (!name) {
+        $("authError").textContent = "Please enter your name.";
+        return;
+      }
+      await api("/signup", "POST", { name, email, password });
+    }
+    const data = await api("/login", "POST", { email, password });
+    token = data.token;
+    currentUser = data.user || null;
+    localStorage.setItem("token", token);
+    if (currentUser) localStorage.setItem("user", JSON.stringify(currentUser));
+    showApp();
+    toast(mode === "signup" ? "Account created and logged in!" : "Welcome back!");
+  } catch (e) {
+    $("authError").textContent = e.message;
+  }
+}
+
+function logout() {
+  token = null;
+  currentUser = null;
+  apps = [];
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  $("app").classList.add("hidden");
+  $("auth").classList.remove("hidden");
+  $("password").value = "";
+  $("authError").textContent = "";
+}
+
+async function showApp() {
+  $("auth").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("date_applied").value = new Date().toISOString().slice(0, 10);
+
+  if (currentUser && currentUser.name) {
+    $("userName").textContent = currentUser.name;
+  } else {
+    try {
+      const me = await api("/me");
+      currentUser = me;
+      localStorage.setItem("user", JSON.stringify(me));
+      $("userName").textContent = me.name;
+    } catch(e) {
+      $("userName").textContent = "User";
+    }
+  }
+
+  loadApplications();
+}
+
+/* Applications handling */
+async function loadApplications() {
+  try {
+    apps = await api("/applications");
+    render();
+  } catch (e) {
+    if (e.status === 401) {
+      logout();
+      $("authError").textContent = "Session expired. Please log in again.";
+    } else {
+      toast(e.message, true);
+    }
+  }
+}
+
+function onRoleChange() {
+  $("customRole").classList.toggle("hidden", $("role").value !== "Other");
+  if ($("role").value === "Other") {
+    $("customRole").focus();
+  }
+}
+
+async function addApplication() {
+  const company = $("company").value.trim();
+  let role = $("role").value;
+  if (role === "Other") role = $("customRole").value.trim();
+
+  if (!company || !role) {
+    toast("Please enter both Company and Role.", true);
+    return;
+  }
+
+  try {
+    await api("/applications", "POST", {
+      company,
+      role,
+      status: $("status").value,
+      date_applied: $("date_applied").value,
+      interview_date: $("interview_date").value,
+      notes: $("notes").value.trim()
+    });
+
+    $("company").value = "";
+    $("role").value = "";
+    $("customRole").value = "";
+    $("interview_date").value = "";
+    $("notes").value = "";
+    onRoleChange();
+
+    toast("Application saved!");
+    loadApplications();
+  } catch (e) {
+    toast(e.message, true);
+  }
+}
+
+async function updateStage(id, newStatus) {
+  try {
+    await api(`/applications/${id}`, "PUT", { status: newStatus });
+    toast(`Moved to ${newStatus}`);
+    loadApplications();
+  } catch (e) {
+    toast(e.message, true);
+  }
+}
+
+function openEditModal(appId) {
+  const a = apps.find(x => x.id === appId);
+  if (!a) return;
+  $("edit_id").value = a.id;
+  $("edit_company").value = a.company;
+  $("edit_role").value = a.role;
+  $("edit_status").value = a.status;
+  $("edit_date_applied").value = a.date_applied || "";
+  $("edit_interview_date").value = a.interview_date || "";
+  $("edit_notes").value = a.notes || "";
+  $("editModal").classList.remove("hidden");
+}
+
+function closeEditModal() {
+  $("editModal").classList.add("hidden");
+}
+
+async function saveEditedApplication() {
+  const id = $("edit_id").value;
+  const company = $("edit_company").value.trim();
+  const role = $("edit_role").value.trim();
+
+  if (!company || !role) {
+    toast("Company and Role cannot be empty.", true);
+    return;
+  }
+
+  try {
+    await api(`/applications/${id}`, "PUT", {
+      company,
+      role,
+      status: $("edit_status").value,
+      date_applied: $("edit_date_applied").value || null,
+      interview_date: $("edit_interview_date").value || null,
+      notes: $("edit_notes").value.trim() || null
+    });
+    closeEditModal();
+    toast("Application updated!");
+    loadApplications();
+  } catch(e) {
+    toast(e.message, true);
+  }
+}
+
+async function deleteApplication(id, company) {
+  if (!confirm(`Delete application for "${company}"?`)) {
+    return;
+  }
+  try {
+    await api(`/applications/${id}`, "DELETE");
+    toast("Application deleted.");
+    loadApplications();
+  } catch(e) {
+    toast(e.message, true);
+  }
+}
+
+function setStage(name) {
+  stageFilter = stageFilter === name ? null : name;
+  render();
+}
+
+function onSearch() {
+  query = $("search").value.trim().toLowerCase();
+  render();
+}
+
+function render() {
+  // Update Pipeline counts
+  const strip = $("strip");
+  strip.innerHTML = "";
+  STAGES.forEach(s => {
+    const count = apps.filter(a => a.status === s.name).length;
+    const b = el("button", "stage");
+    b.style.setProperty("--c", s.color);
+    b.setAttribute("aria-pressed", String(stageFilter === s.name));
+    b.appendChild(el("span", "n", String(count)));
+    b.appendChild(el("span", "t", s.name));
+    b.onclick = () => setStage(s.name);
+    strip.appendChild(b);
+  });
+
+  // Filter list
+  const shown = apps.filter(a =>
+    (!stageFilter || a.status === stageFilter) &&
+    (!query || (a.company + " " + a.role + " " + (a.notes || "")).toLowerCase().includes(query))
+  );
+
+  $("appCountBadge").textContent = `${apps.length} total (${shown.length} shown)`;
+
+  const note = $("filterNote");
+  note.textContent = "";
+  if (stageFilter) {
+    note.appendChild(document.createTextNode(`Stage: ${stageFilter} (${shown.length}) `));
+    const clear = el("button", "linkbtn", "• Show all");
+    clear.onclick = () => setStage(stageFilter);
+    note.appendChild(clear);
+  }
+
+  const list = $("list");
+  list.innerHTML = "";
+
+  if (!shown.length) {
+    const empty = el("li", "empty");
+    if (!apps.length) {
+      empty.appendChild(el("strong", "", "No job applications yet"));
+      empty.appendChild(document.createTextNode("Use the form to track your first job application."));
+    } else {
+      empty.appendChild(el("strong", "", "No matching applications"));
+      empty.appendChild(document.createTextNode("Try a different search keyword or stage filter."));
+    }
+    list.appendChild(empty);
+    return;
+  }
+
+  shown.forEach(a => {
+    const li = el("li", "item");
+
+    // Header
+    const header = el("div", "item-header");
+    const left = el("div");
+    left.appendChild(el("div", "company", a.company));
+    left.appendChild(el("div", "role", a.role));
+    header.appendChild(left);
+
+    const badge = el("span", "badge", a.status);
+    badge.style.setProperty("--c", stageColor(a.status));
+    header.appendChild(badge);
+    li.appendChild(header);
+
+    // Dates
+    const applied = formatDate(a.date_applied);
+    const interview = formatDate(a.interview_date);
+    if (applied || interview) {
+      const dates = el("div", "dates");
+      if (applied) dates.appendChild(el("span", "", `📅 ${applied}`));
+      if (interview) dates.appendChild(el("span", "soon", `🎯 Interview: ${interview}`));
+      li.appendChild(dates);
+    }
+
+    // Notes
+    if (a.notes) {
+      li.appendChild(el("div", "notes", a.notes));
+    }
+
+    // Actions
+    const actions = el("div", "item-actions");
+
+    const quickStatus = el("div", "quick-status-wrap");
+    quickStatus.appendChild(el("span", "", "Stage:"));
+    const select = el("select", "status-select-sm");
+    STAGES.forEach(st => {
+      const opt = document.createElement("option");
+      opt.value = st.name;
+      opt.textContent = st.name;
+      if (st.name === a.status) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.onchange = (e) => updateStage(a.id, e.target.value);
+    quickStatus.appendChild(select);
+    actions.appendChild(quickStatus);
+
+    const btnGroup = el("div", "btn-group");
+    const editBtn = el("button", "btn ghost sm", "Edit");
+    editBtn.onclick = () => openEditModal(a.id);
+    btnGroup.appendChild(editBtn);
+
+    const delBtn = el("button", "btn danger sm", "Delete");
+    delBtn.onclick = () => deleteApplication(a.id, a.company);
+    btnGroup.appendChild(delBtn);
+
+    actions.appendChild(btnGroup);
+    li.appendChild(actions);
+
+    list.appendChild(li);
+  });
+}
+
+// Android PWA Install Event Handler
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  $("installBanner").classList.remove("hidden");
+});
+
+$("installBtn").addEventListener("click", async () => {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    if (outcome === "accepted") {
+      $("installBanner").classList.add("hidden");
+    }
+    deferredInstallPrompt = null;
+  }
+});
+
+// Register Service Worker for Mobile PWA
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(console.warn);
+  });
+}
+
+updateApiDisplay();
+
+if (token) {
+  showApp();
+}
+</script>
+</body>
+</html>

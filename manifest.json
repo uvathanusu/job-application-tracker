@@ -1,0 +1,18 @@
+{
+  "name": "Jobtrail - Job Application Tracker",
+  "short_name": "Jobtrail",
+  "description": "Track and organize your job applications across every hiring stage.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#164838",
+  "theme_color": "#1f5f4a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

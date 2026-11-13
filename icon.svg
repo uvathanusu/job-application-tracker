@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#164838" />
+      <stop offset="100%" stop-color="#1f5f4a" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+  
+  <!-- Briefcase Handle -->
+  <path d="M 186 170 C 186 138 210 114 242 114 L 270 114 C 302 114 326 138 326 170 L 326 200 L 186 200 Z" 
+        fill="none" stroke="#eaf3ef" stroke-width="26" stroke-linecap="round" />
+  
+  <!-- Briefcase Body -->
+  <rect x="96" y="200" width="320" height="204" rx="28" fill="#ffffff" filter="url(#shadow)" />
+  
+  <!-- Briefcase Straps & Clasp -->
+  <rect x="236" y="200" width="40" height="72" rx="10" fill="#1f5f4a" />
+  <circle cx="256" cy="242" r="6" fill="#8fc7b1" />
+  <line x1="96" y1="244" x2="416" y2="244" stroke="#dce3e0" stroke-width="4" />
+
+  <!-- Success check badge on corner -->
+  <circle cx="376" cy="364" r="42" fill="#2f7d4f" stroke="#ffffff" stroke-width="8" />
+  <polyline points="360,364 372,376 394,352" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

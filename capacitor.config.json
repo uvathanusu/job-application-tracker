@@ -1,0 +1,9 @@
+{
+  "appId": "com.jobtrail.tracker",
+  "appName": "Jobtrail",
+  "webDir": "www",
+  "server": {
+    "cleartext": true,
+    "androidScheme": "http"
+  }
+}
